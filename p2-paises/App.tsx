@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Image,
   Pressable,
   StyleSheet, 
   Text, 
@@ -14,6 +15,8 @@ export default function App() {
   const [nomeOficial, setNomeOficial] = useState('')
   const [traduzidoRusso, setTraduzidoRusso] = useState('')
   const [foto, setFoto] = useState('')
+  const [bandeira, setBandeira] = useState('')
+  const [estiloProcura, setEstiloProcura] = useState('')
 
   const procuraNome = async () => {
     const resposta = await fetch(`https://restcountries.com/v3.1/name/${nome}`)
@@ -23,6 +26,16 @@ export default function App() {
     setNomeOficial(dados[0].name.official)
     setTraduzidoRusso(dados[0].translations.rus.common)
     setFoto(dados[0].maps.openStreetMaps)
+    setEstiloProcura('pais')
+  }
+
+  const procuraCapital = async () => {
+    const resposta = await fetch(`https://restcountries.com/v3.1/capital/${nome}`)
+
+    const dados = await resposta.json()
+    setNomeOficial(dados[0].name.official)
+    setBandeira(dados[0].flags.png)
+    setEstiloProcura('capital')
   }
 
   return (
@@ -37,7 +50,11 @@ export default function App() {
       <Pressable style={styles.button} onPress={procuraNome}>
           <Text style={styles.buttonText}>PROCURAR PAÍS</Text>
       </Pressable>
-      <View style={styles.result}>
+      <Pressable style={styles.button} onPress={procuraCapital}>
+          <Text style={styles.buttonText}>PROCURAR CAPITAL</Text>
+      </Pressable>
+      {estiloProcura === 'pais' && (
+        <View style={styles.result}>
           <Text style={styles.title}>RESULTADO DA PROCURA</Text>
           <View style={styles.resultDiv}>
             <Text style={styles.label}>Nome comum: {nomeComum}</Text>
@@ -45,7 +62,23 @@ export default function App() {
             <Text style={styles.label}>Nome em russo: {traduzidoRusso}</Text>
             <Text style={styles.label}>Foto do país: {foto}</Text>
           </View>
-      </View>
+        </View>
+      )}
+
+      {estiloProcura === 'capital' && (
+        <View style={styles.result}>
+          <Text style={styles.title}>RESULTADO DA PROCURA</Text>
+          <View style={styles.resultDivCapital}>
+            <Text style={styles.label}>Nome oficial: {nomeOficial}</Text>
+            <Text style={styles.label}>Bandeira: </Text>
+              {bandeira ? (
+                <Image source={{uri: bandeira}} style={{width: 200, height: 100}}/>
+              ) : (
+                <Text style={styles.label}>A bandeira não está disponível</Text>
+              )}
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -57,7 +90,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginTop: 8,
     padding: 12,
-    width: '80%',
+    width: '80%'
   },
   buttonText: {
     color: 'white',
@@ -69,7 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0F172A',
     flex: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: 24
   },
   input: {
     borderColor: 'gray',
@@ -99,13 +132,22 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 1,
     padding: 16,
+    width: '80%'
+  },
+   resultDivCapital: {
+    backgroundColor: '#0F172A',
+    borderColor: 'gray',
+    borderRadius: 4,
+    borderWidth: 1,
+    padding: 16,
     width: '80%',
+    alignItems: 'center'
   },
   title: {
     color: 'white',
     fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: 'center'
   }
 });
