@@ -71,11 +71,7 @@ export default function App() {
           <View style={styles.resultDivCapital}>
             <Text style={styles.label}>Nome oficial: {nomeOficial}</Text>
             <Text style={styles.label}>Bandeira: </Text>
-              {bandeira ? (
-                <Image source={{uri: bandeira}} style={{width: 200, height: 100}}/>
-              ) : (
-                <Text style={styles.label}>A bandeira não está disponível</Text>
-              )}
+                <Image source={{uri: bandeira}} style={{width: 320, height: 200}}/>
           </View>
         </View>
       )}
